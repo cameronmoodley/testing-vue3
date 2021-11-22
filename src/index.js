@@ -1,23 +1,39 @@
 import * as Vue from 'vue/dist/vue.esm-bundler.js';
 
-const app = Vue.createApp({
+const Num = {
+	props: ['number'],
 	template: `
-    <p>{{count}}</p>
-    <div v-if="isEven(count)">Even</div>
-    <div v-else>Odd</div>
+    <button :class="getClass(number)" @click="click">
+      <div>{{ number }}</div>
+    </button>
+  `,
+	methods: {
+		click() {
+			this.$emit('chosen', this.number);
+		},
+		getClass(number) {
+			return this.isEven(number) ? 'blue' : 'red';
+		},
+		isEven(val) {
+			return val % 2 === 0;
+		},
+	},
+};
 
-    <div v-for="number in numbers">
-      <div :class="getClass(number)">
-        {{number}}
-      </div>
-    </div>
+const app = Vue.createApp({
+	components: {
+		Num,
+	},
+	template: `
+    <num v-on:chosen="addNumber" v-for="number in numbers"  :number="number"/>
+
     <br /><br />
-    <button @click="increment">Increment</button>
+    <num v-for="number in numberHistory"  :number="number"/>
   `,
 	data() {
 		return {
-			count: 0,
 			numbers: [0, 1, 2, 3, 4, 5, 7, 8, 9, 10],
+			numberHistory: [],
 		};
 	},
 	computed: {
@@ -32,14 +48,16 @@ const app = Vue.createApp({
 		isEven(val) {
 			return val % 2 === 0;
 		},
-		getClass(number) {
-			return this.isEven(number) ? 'blue' : 'red';
+		addNumber(number) {
+			console.log(number);
+			this.numberHistory.push(number);
 		},
 	},
 });
 app.mount('#app');
 
-// all computed properties takes no arguments
+// all computed properties takes no arguments.
 // Reactive numbers array changes the dom updates.
-// for business logic
-// dont user tenary inside HTML create a method for it
+// for business logic.
+// dont user tenary inside HTML create a method for it.
+// Computed is known as derived data use it for errors like about etc.
